@@ -1,12 +1,13 @@
 // tumblrBadge by Robert Nyman, http://www.robertnyman.com/, http://code.google.com/p/tumblrbadge/
+//then messed with by me.
 var tumblrBadge = function () {
-  // User settings
+	// User settings
 	var settings = {
 		userName : "minecraft101net", // Your Tumblr user name
 		itemsToShow : 10, // Number of Tumblr posts to retrieve
 		itemToAddBadgeTo : "tumblr-badge", // Id of HTML element to put badge code into
 		imageSize : 100, // Values can be 75, 100, 250, 400 or 500
-		shortPublishDate : true, // Whether the publishing date should be cut shorter
+		shortPublishDate : false, // Whether the publishing date should be cut shorter
 		timeToWait : 2000 // Milliseconds, 1000 = 1 second
 	};
 	
@@ -42,7 +43,31 @@ var tumblrBadge = function () {
 				// Only get content for text, photo, quote and link posts
 				if (/regular|photo|quote|link|conversation/.test(post.type)) {
 					listItem = document.createElement("li");
+					
+					
+					// Create a link to Tumblr post
+					//postLink = document.createElement("a");
+					//postLink.className = "tumblr-post-date";
+					//postLink.href = post.url;
+					//postLink.innerHTML = (settings.shortPublishDate)? post["date"].replace(/(^\w{3},\s)|(:\d{2}$)/g, "") : post["date"];
+					//listItem.appendChild(postLink);
+	
+					//I just want a date, not a link so I use this code instead of the above block. Also trimmed date.
+					postLink = document.createElement("span");
+					postLink.className = "tumblr-post-date";
+					postLink.innerHTML = post["date"].substring(0, 16);
+					listItem.appendChild(postLink);
+					
+					//these lines are the title: let's just do plain text posts
+					if (post.type === "regular"){
+						postTitle = document.createElement("h2");
+						postTitle.className = "tumblr-post-title";
+						postTitle.innerHTML = post["regular-title"];
+						listItem.appendChild(postTitle);
+						};
+					
 					text = post["regular-body"] || post["photo-caption"] || post["quote-source"] || post["link-text"] || post["link-url"] || "";
+					
 					if (post.type === "photo") {
 						link = document.createElement("a");
 						link.href = post.url;
@@ -67,13 +92,6 @@ var tumblrBadge = function () {
 						}
 					}
 					listItem.innerHTML += text;
-
-					// Create a link to Tumblr post
-					postLink = document.createElement("a");
-					postLink.className = "tumblr-post-date";
-					postLink.href = post.url;
-					postLink.innerHTML = (settings.shortPublishDate)? post["date"].replace(/(^\w{3},\s)|(:\d{2}$)/g, "") : post["date"];
-					listItem.appendChild(postLink);
 
 					// Apply list item to list
 					list.appendChild(listItem);
